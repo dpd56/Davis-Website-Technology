@@ -1,0 +1,43 @@
+# Azure DevOps Pipeline for deploying a static website to Azure App Service
+# Replace <app-name> and <azure-subscription> with your actual values
+
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  webAppName: 'dev-davis-intern-app' # Set your Azure App Service name here
+  packagePath: '$(System.DefaultWorkingDirectory)'
+
+steps:
+
+- task: ArchiveFiles@2
+  displayName: 'Archive website files'
+  inputs:
+    rootFolderOrFile: '$(packagePath)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/site.zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: site.zip'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/site.zip'
+    ArtifactName: 'drop'
+
+- task: AzureWebApp@1
+  displayName: 'Deploy to Azure Web App'
+  inputs:
+    azureSubscription: 'Davis Intern Service Connection' # Set your Azure service connection name here
+    appType: 'webApp'
+    appName: '$(webAppName)'
+    package: '$(Build.ArtifactStagingDirectory)/site.zip'
+    deploymentMethod: 'auto'
+
+# Security best practices:
+# - Use Azure service connections for authentication
+# - Do not store secrets in this file
+# - Use environment variables for sensitive data
