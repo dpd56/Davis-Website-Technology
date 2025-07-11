@@ -8,7 +8,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  webAppName: 'dev-davis-intern-app' # Set your Azure App Service name here
+  webAppName: 'dev-davis-app-service' # Set your Azure App Service name here
   packagePath: '$(System.DefaultWorkingDirectory)'
 
 steps:
